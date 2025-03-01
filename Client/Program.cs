@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 #if ANDROID_LIB
@@ -57,9 +58,12 @@ namespace SysDVR.Client
 		internal static StringTable Strings = new();
 
 		static readonly StringBuilder InitializationError = new();
+		
+		[UnconditionalSuppressMessage("SingleFile", "IL3000:Avoid accessing Assembly file path when publishing as a single file", Justification = "It works here")]
+		public static readonly string DisplayVersion = ThisAssembly.Git.SemVer.Patch == "0" ?
+			$"{ThisAssembly.Git.SemVer.Major}.{ThisAssembly.Git.SemVer.Minor}" :
+			$"{ThisAssembly.Git.SemVer.Major}.{ThisAssembly.Git.SemVer.Minor}.{ThisAssembly.Git.SemVer.Patch}";
 
-        [UnconditionalSuppressMessage("SingleFile", "IL3000:Avoid accessing Assembly file path when publishing as a single file", Justification = "It works here")]
-        public static readonly string Version = ThisAssembly.Git.BaseTag.ToString();
         public static readonly string BuildID = ThisAssembly.Git.Commit.ToString();
 
 		public static Options Options = new();
@@ -130,7 +134,7 @@ namespace SysDVR.Client
 				{
 					DynamicLibraryLoader.Initialize();
 
-					Console.WriteLine($"SysDVR-Client {Version} - by exelix");
+					Console.WriteLine($"SysDVR-Client {DisplayVersion} - by exelix");
 					Console.WriteLine("https://github.com/exelix11/SysDVR");
 					Console.WriteLine($"Build ID: {BuildID}\n");
 
